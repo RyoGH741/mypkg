@@ -1,21 +1,20 @@
-import rclpy#ROS 2のクライアントのためのライブラリ
-from rclpy.node import Node#ノードを実装するためのNodeクラス（クラスは第10回で)
-from std_msgs.msg import Int16#通信の型（16ビットの符号付き整）
+import rclpy
+from rclpy.node import Node
+from person_msgs.srv import Query #使う型を変更
 
 rclpy.init()
-node = Node("talker")#ノード作成（nodeという「オブジェクト」を作成）
-pub = node.create_publisher(Int16, "countup", 10)#パブリッシャのオブジェクト作成
-n = 0#カウント用変数
+node = Node("talker")
 
 
-def cb():
-    global n
-    msg = Int16()
-    msg.data = n
-    pub.publish(msg)
-    n += 1
+def cb(request, response):
+    if request.name == "上田隆一":
+        response.age = 46
+    else:
+        response.age = 255
+
+    return response
 
 
 def main():
-    node.create_timer(0.5, cb)
+    srv = node.create_service(Query, "query", cb) #サービスの作成
     rclpy.spin(node)
