@@ -2,6 +2,11 @@ import rclpy#ROS 2のクライアントのためのライブラリ
 from rclpy.node import Node#ノードを実装するためのNodeクラス（クラスは第10回で)
 from std_msgs.msg import Int16#通信の型（16ビットの符号付き整）
 
+class Talker():
+    def __init__(self):
+
+
+
 rclpy.init()
 node = Node("talker")#ノード作成（nodeという「オブジェクト」を作成）
 pub = node.create_publisher(Int16, "countup", 10)#パブリッシャのオブジェクト作成
