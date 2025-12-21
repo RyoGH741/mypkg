@@ -4,7 +4,7 @@
   <name>mypkg</name>
   <version>0.0.0</version>
   <description>robosys授業</description>
-  <maintainer email="gerggms14@gmail.com">ryo1</maintainer>
+  <maintainer email="gerggms14@gmail.com">Ryoichi Sakamaki</maintainer>
   <license>BSD-3-Clause</license>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

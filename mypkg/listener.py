@@ -1,17 +1,24 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int16
+from std_msgs.msg import Float32
 
 
-rclpy.init()
-node = Node("listener")
+class Tuner(Node):
 
+    def __init__(self):
+        super().__init__("tuner")
+        self.sub = self.create_subscription(Float32, "/mic/freq", self.cb, 10)
 
-def cb(msg):
-    global node
-    node.get_logger().info("Listen: %d" % msg.data)
+    def cb(self, msg):
+        self.get_logger().info(str(msg.data))
 
 
 def main():
-    pub = node.create_subscription(Int16, "countup", cb, 10)
+    rclpy.init()
+    node = Tuner()
     rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__mian__':
+    mian()
