@@ -12,7 +12,7 @@ class MicFreqPub(Node):
         self.pub = self.create_publisher(Float32, "mic_freq", 10)
 
         self.samplingr = 44100
-        self.bs = 2048
+        self.bs = 1024 * 4
         self.device = None
 
         self.stream = sd.InputStream(channels=1, samplerate=self.samplingr, blocksize=self.bs, callback=self.cb, device=self.device)
@@ -23,10 +23,20 @@ class MicFreqPub(Node):
             self.get_logger().warn(f"Sounddevice status: {status}")
         
         audio = indata[:, 0]
-        shinpuku = np.sqrt(np.mean(audio ** 2))
+        #shinpuku = np.sqrt(np.mean(audio ** 2))
+        # FFT実行
+        fft_data = np.fft.rfft(audio)
+        fft_mag = np.abs(fft_data)
+
+        # 周波数軸生成
+        freqs = np.fft.rfftfreq(len(audio), 1 / self.samplingr)
+
+        # 最大振幅のインデックスを取得
+        max_index = np.argmax(fft_mag)
+        dominant_freq = freqs[max_index]
 
         msg = Float32()
-        msg.data = float(shinpuku)
+        msg.data = float(dominant_freq)
         self.pub.publish(msg)
         
 
