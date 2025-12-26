@@ -9,7 +9,7 @@ class MicFreqPub(Node):
 
     def __init__(self):
         super().__init__("mic_freq_pub")
-        self.pub = self.create_publisher(Float32, "/mic/freq", 10)
+        self.pub = self.create_publisher(Float32, "mic_freq", 10)
 
         self.samplingr = 44100
         self.bs = 2048
