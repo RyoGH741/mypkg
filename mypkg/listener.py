@@ -38,7 +38,7 @@ class Tuner(Node):
                 difference = round(self.heikinritu(i) - freq, 3)
                 break
 
-        output = f"{onmei}{number} {difference}"
+        output = f'{onmei}{number} {difference}'
         msg = String()
         msg.data = output
         self.publisher.publish(msg)
