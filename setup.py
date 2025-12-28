@@ -27,8 +27,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'talker = mypkg.mic_freq_pub:main',
+            'mic_freq_pub = mypkg.mic_freq_pub:main',
             'listener = mypkg.listener:main',
+            'piano = mypkg.piano:main',
         ],
     },
 )

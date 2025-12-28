@@ -1,6 +1,9 @@
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: 2025 Ryoichi Sakamaki
+# SPDX-License-Identifier: BSD-3-Clause
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from sensor_msgs.msg import ChannelFloat32
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
@@ -8,7 +11,7 @@ import matplotlib.patches as patches
 class DrawPiano(Node):
     def __init__(self):
         super().__init__("draw_piano")
-        self.sub = self.create_subscription(String, "note_info", self.cb, 10)
+        self.sub = self.create_subscription(ChannelFloat32, "note_info", self.cb, 10)
 
         plt.ion()
         self.fig, self.ax = plt.subplots(figsize=(12, 3))
@@ -17,11 +20,8 @@ class DrawPiano(Node):
         self.ax.axis("off")
         plt.show(block=False)
     
-    def cb(self, msg):
-        note_str, diff_str = msg.data.strip().split()
-        note = note_str
-        diff = float(diff_str)
-        self.update_piano(note, diff)
+    def cb(self, note_info_msg):
+        self.update_piano(note_info_msg.name, note_info_msg.values[0])
 
     def update_piano(self, note ,diff):
         self.ax.clear()
