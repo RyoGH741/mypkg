@@ -6,7 +6,7 @@ package_name = 'mypkg'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer='Ryoichi Sakamaki',
     maintainer_email='gerggms14@gmail.com',
-    description='robosys授業',
+    description='ros2でチューナーを再現したシステム',
     license='BSD-3-Clause',
     extras_require={
         'test': [
@@ -29,7 +29,7 @@ setup(
         'console_scripts': [
             'mic_freq_pub = mypkg.mic_freq_pub:main',
             'tuner_node = mypkg.tuner_node:main',
-            'piano = mypkg.piano:main',
+            'draw_piano = mypkg.draw_piano:main',
         ],
     },
 )

@@ -9,19 +9,19 @@ import launch_ros.actions
 
 def generate_launch_description():
 
-    talker = launch_ros.actions.Node(
+    mic_freq_pub = launch_ros.actions.Node(
         package='mypkg',#パッケージの名前を指定
         executable='mic_freq_pub',#実行するファイルの指定
         )
-    listener = launch_ros.actions.Node(
+    tuner_node = launch_ros.actions.Node(
         package='mypkg',
         executable='tuner_node',
         output='screen'#ログを端末に出すための設定
         )
-    piano = launch_ros.actions.Node(
+    draw_piano = launch_ros.actions.Node(
         package='mypkg',
-        executable='piano',
+        executable='draw_piano',
         output='screen'
         )
 
-    return launch.LaunchDescription([talker, listener, piano])         
+    return launch.LaunchDescription([mic_freq_pub, tuner_node, draw_piano])         
