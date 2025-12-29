@@ -13,7 +13,7 @@ class Tuner(Node):
         self.sub = self.create_subscription(Float32, "mic_freq", self.cb, 10)
         self.pub = self.create_publisher(ChannelFloat32, "note_info", 10)
 
-        self._logger().info("tuner node started")
+        self.get_logger().info("tuner node started")
 
         self.onmei_list = ["A", "B", "H", "C", "Ds", "D", "Es", "E", "F", "Gs", "G", "As"]
 
@@ -61,4 +61,3 @@ def main():
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()

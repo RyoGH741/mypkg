@@ -29,6 +29,8 @@ class MicFreqPub(Node):
             self.get_logger().error(f"faild to start mic_freq_pub: {e}")
 
     def cb(self, indata, frames, time, status):
+        if not rclpy.ok():
+            return
         if status:
             self.get_logger().warn(f"Sounddevice status: {status}")
         
@@ -49,6 +51,8 @@ class MicFreqPub(Node):
         #送信
         freq_msg = Float32()
         freq_msg.data = float(freq)
+        if rclpy.ok():
+            self.pub.publish(freq_msg)
         self.pub.publish(freq_msg)
         
 
@@ -60,7 +64,8 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        node.stream.stop()
-        node.stream.close()
+    # 1. まずマイクを止める（これでcbが呼ばれなくなる）
+        if hasattr(node, 'stream') and node.stream:
+            node.stream.stop()
+            node.stream.close()
         node.destroy_node()
-        rclpy.shutdown()

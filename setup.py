@@ -28,7 +28,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mic_freq_pub = mypkg.mic_freq_pub:main',
-            'listener = mypkg.listener:main',
+            'tuner_node = mypkg.tuner_node:main',
             'piano = mypkg.piano:main',
         ],
     },

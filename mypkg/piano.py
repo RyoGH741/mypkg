@@ -13,81 +13,80 @@ class DrawPiano(Node):
         super().__init__("draw_piano")
         self.sub = self.create_subscription(ChannelFloat32, "note_info", self.cb, 10)
 
+        self.get_logger().info("draw_piano started")
+
+        #描画設定
         plt.ion()
-        self.fig, self.ax = plt.subplots(figsize=(12, 3))
+        self.fig, self.ax = plt.subplots(figsize=(12, 4))
         self.ax.set_xlim(5, 57)
         self.ax.set_ylim(-1.4, 1.6)
         self.ax.axis("off")
+        self.all_keys = {}
+        self.create_all_keys()
+        # テキストオブジェクト（書き換え用）
+        self.info_text = self.ax.text(26, 1.2, "Waiting for sound...", ha="center", fontsize=14, fontweight="bold")
+        self.meter_text = self.ax.text(26, -0.8, "", ha="center", family="monospace", fontsize=12)
         plt.show(block=False)
     
-    def cb(self, note_info_msg):
-        self.update_piano(note_info_msg.name, note_info_msg.values[0])
-
-    def update_piano(self, note ,diff):
-        self.ax.clear()
-        self.ax.set_xlim(5, 57)
-        self.ax.set_ylim(-1.4, 1.6)
-        self.ax.axis("off")
-
-        # 全鍵の音名（A0〜C8）
+    def create_all_keys(self):
         white = ["C", "D", "E", "F", "G", "A", "H"]
         black = ["Ds", "Es", "Gs", "As", "B"]
-        white_all = []
-        black_all = []
 
-        for octave in range(0, 8):
-            for w in white:
-                white_all.append(f"{w}{octave}")
-        white_all.append("C8")  # 最後のC
-
-        for octave in range(0, 8):
-            for w in black:
-                black_all.append(f"{w}{octave}")
-
-        # 白鍵を描画
+        #白鍵の描画
         x = 0
-        for i in white_all:
-            color = "red" if i in note else "white"
-            rect = patches.Rectangle((x, 0), 1, 1, edgecolor="black", facecolor=color)
-            self.ax.add_patch(rect)
-            x += 1
+        for octave in range(0, 9):
+            for i in white:
+                white_name = f"{i}{octave}"
+                rect = patches.Rectangle((x, 0), 1, 1, edgecolor="black", facecolor="white")
+                self.ax.add_patch(rect)
+                self.all_keys[white_name] = rect
+                x += 1
 
-        # 黒鍵を描画
-        x2 = [0,1,3,4,5]
-        x2_all = [x + 7 * n for n in range(8) for x in x2]  
-        for i, name in enumerate(black_all):
-            color = "red" if name in note else "black"
-            rect = patches.Rectangle((x2_all[i] + 0.5, 0.4), 0.8, 0.6, facecolor=color, edgecolor="black", zorder=2)
-            self.ax.add_patch(rect)
+        #黒鍵の描画
+        x2 = 0
+        offsets = [0,1,3,4,5]
 
-        self.ax.text(28, 1.3, f"{note}", ha="center", va="center", fontsize=16, color="black", fontweight="bold")
-        self.ax.text(28, -0.5, f"{diff}Hz", ha="center", va="center", fontsize=16, color="black", fontweight="bold")
+        for octave in range(0, 8):
+            for j, i in enumerate(black):
+                black_name = f"{i}{octave}"
+                rect = patches.Rectangle((x2 + offsets[j] + 0.5, 0.4), 0.8, 0.6, facecolor="black", edgecolor="black", zorder=2)
+                self.ax.add_patch(rect)
+                self.all_keys[black_name] = rect
+            x2 += 7
 
-        # ==== 簡易メーター ====
-        if diff < 0:
-            meter_text = "- |  0    +"
-            label = "low"
-        elif diff > 0:
-            meter_text = "-    0  | +"
-            label = "high"
-        else:
-            meter_text = "-   |0|   +"
-            label = "just"
+    def cb(self, note_info_msg):
+# 1. 全ての色をリセット
+        for name, rect in self.all_keys.items():
+            # 名前に 's' (sharp) が含まれるかどうかで色を決める
+            default_color = "black" if ("s" in name or "B" in name) else "white"
+            rect.set_facecolor(default_color)
+    
+        # 該当する音を赤くする
+        target_note = note_info_msg.name
+        if target_note in self.all_keys:
+            self.all_keys[target_note].set_facecolor("red")
 
-        self.ax.text(28, -0.8, meter_text, ha="center", va="center", fontsize=14, color="black", family="monospace")
-        self.ax.text(28, -1.2, f"{label}", ha="center", va="center", fontsize=12, color="black")
+        # メーターとテキストの更新
+        diff = note_info_msg.values[0]
+        base = note_info_msg.values[1]
+        
+        if diff < -0.5: meter = "[ < |     ] low"
+        elif diff > 0.5: meter = "[     | > ] high"
+        else: meter = "[   |OK|   ] just"
 
-        self.fig.canvas.draw()
+        self.info_text.set_text(f"Note: {target_note}  ({base}Hz)")
+        self.meter_text.set_text(f"{meter}\nDiff: {diff:+.2f} Hz")
+        #再描画
         self.fig.canvas.flush_events()
 
 
 def main():
     rclpy.init()
     node = DrawPiano()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
-
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        plt.close('all')
+        node.destroy_node()

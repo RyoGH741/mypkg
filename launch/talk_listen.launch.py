@@ -15,7 +15,7 @@ def generate_launch_description():
         )
     listener = launch_ros.actions.Node(
         package='mypkg',
-        executable='listener',
+        executable='tuner_node',
         output='screen'#ログを端末に出すための設定
         )
     piano = launch_ros.actions.Node(
