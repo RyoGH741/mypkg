@@ -13,16 +13,16 @@ class Tuner(Node):
         self.sub = self.create_subscription(Float32, "mic_freq", self.cb, 10)
         self.pub = self.create_publisher(ChannelFloat32, "note_info", 10)
 
-        self.get_logger().info("tuner node started")
-
         self.onmei_list = ["A", "B", "H", "C", "Ds", "D", "Es", "E", "F", "Gs", "G", "As"]
 
     #平均律計算のメソッド
     def heikinritu(self, n):
         return 442 * 2 ** (1 / 12 * (n-49))
     
-    def cb(self, freq_msg):
-        freq = freq_msg.data
+    def cb(self, msg):
+        self.get_logger().info("from mic_freq_pub to tuner_node : %f" %msg.data)#送られたか確認
+        
+        freq = msg.data
         number = 0
         onmei = "Undefined"
 
@@ -42,22 +42,19 @@ class Tuner(Node):
             elif(high <= freq ) and (88 == i):
                 break
         
-        #差と基準周波数の計算
-        difference = round(self.heikinritu(i) - freq, 3)
+        #周波数差の計算と基準周波数
+        diff = round(self.heikinritu(i) - freq, 3)
         basefreq = round(self.heikinritu(i), 3)
 
         #送信
         note_info_msg = ChannelFloat32()
         note_info_msg.name = f"{onmei}{number}"
-        note_info_msg.values = [difference, basefreq]
+        note_info_msg.values = [diff, basefreq, freq]
         self.pub.publish(note_info_msg)
 
 def main():
     rclpy.init()
     node = Tuner()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
