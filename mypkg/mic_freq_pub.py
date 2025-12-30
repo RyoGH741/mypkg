@@ -24,13 +24,11 @@ class MicFreqPub(Node):
                                         blocksize=self.bs, callback=self.cb,
                                             device=self.device)
             self.stream.start()
-            self.get_logger().info("mic_freq_pub started")
+            self.get_logger().info("audio stream started")
         except Exception as e:
-            self.get_logger().error(f"faild to start mic_freq_pub: {e}")
+            self.get_logger().error(f"faild to start audio stream: {e}")
 
     def cb(self, indata, frames, time, status):
-        if not rclpy.ok():
-            return
         if status:
             self.get_logger().warn(f"Sounddevice status: {status}")
         
@@ -49,23 +47,16 @@ class MicFreqPub(Node):
         freq = freqs[max_index]
 
         #送信
-        freq_msg = Float32()
-        freq_msg.data = float(freq)
-        if rclpy.ok():
-            self.pub.publish(freq_msg)
-        self.pub.publish(freq_msg)
+        msg = Float32()
+        msg.data = float(freq)
+        self.pub.publish(msg)
         
 
 def main():
     rclpy.init()
     node = MicFreqPub()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-    # 1. まずマイクを止める（これでcbが呼ばれなくなる）
-        if hasattr(node, 'stream') and node.stream:
-            node.stream.stop()
-            node.stream.close()
-        node.destroy_node()
+    rclpy.spin(node)
+    node.stream.stop()
+    node.stream.close()
+    node.destroy_node()
+    rclpy.shutdown()
