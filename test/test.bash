@@ -11,12 +11,12 @@ cd $dir/ros2_ws
 colcon build --packages-select mypkg
 
 # ROS2環境設定
-source $dir/.bashrc
-# source $dir/ros2_ws/install/setup.bash
+source /opt/ros/humble/setup.bash
+source $dir/ros2_ws/install/setup.bash
 
 # --- launch実行 & ログ保存 ---
 echo "🚀 Launching mic_to_piano for 10 seconds..."
-timeout 3 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log 2>&1
+timeout 5 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log 2>&1
 echo "📜 Log saved to /tmp/mypkg.log"
 
 # --- テスト1: mic_freq_pub → tuner_node ---
