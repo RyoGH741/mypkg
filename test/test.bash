@@ -16,7 +16,7 @@ source $dir/.bashrc
 
 # --- launch実行 & ログ保存 ---
 echo "🚀 Launching mic_to_piano for 10 seconds..."
-timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log 2>&1
+timeout 3 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log 2>&1
 echo "📜 Log saved to /tmp/mypkg.log"
 
 # --- テスト1: mic_freq_pub → tuner_node ---
