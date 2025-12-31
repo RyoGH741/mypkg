@@ -41,10 +41,9 @@ class MicFreqPub(Node):
         freq = float(self.pitch_o(audio)[0])
 
         #送信
-        if freq > 0:
-            msg = Float32()
-            msg.data = freq
-            self.pub.publish(msg)
+        msg = Float32()
+        msg.data = freq
+        self.pub.publish(msg)
         
 def main():
     rclpy.init()
