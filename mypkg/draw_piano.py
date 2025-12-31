@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # SPDX-FileCopyrightText: 2025 Ryoichi Sakamaki
-# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-License-Identifier: GPL-3.0-only
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import ChannelFloat32

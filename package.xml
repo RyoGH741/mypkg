@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <description>ros2でチューナーを再現したシステム</description>
   <maintainer email="gerggms14@gmail.com">Ryoichi Sakamaki</maintainer>
-  <license>BSD-3-Clause</license>
+  <license>GPL-3.0-only</license>
   
   <buildtool_depend>ament_python</buildtool_depend>
   
@@ -13,6 +13,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>python3-sounddevice</exec_depend>
+  <exec_depend>python3-aubio</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-matplotlib</exec_depend>
   <exec_depend>launch_ros</exec_depend>
