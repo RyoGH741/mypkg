@@ -43,13 +43,13 @@ class Tuner(Node):
                 break
         
         #周波数差の計算と基準周波数
-        diff = round(self.heikinritu(i) - freq, 3)
-        basefreq = round(self.heikinritu(i), 3)
+        diff = self.heikinritu(i) - freq
+        basefreq = self.heikinritu(i)
 
         #送信
         note_info_msg = ChannelFloat32()
         note_info_msg.name = f"{onmei}{number}"
-        note_info_msg.values = [diff, basefreq, freq]
+        note_info_msg.values = [diff, basefreq]
         self.pub.publish(note_info_msg)
 
 def main():
