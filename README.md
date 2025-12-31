@@ -59,3 +59,6 @@
 ## ライセンス
 - このソフトウェアパッケージは GNU General Public License v3.0 のもとで公開されています。
 - © 2025 Ryoichi Sakamaki
+- 本プロジェクトで使用している aubio は Paul Brossier 氏および貢献者によって著作権が保持されており、GNU GPL v3.0 のもとで提供されています。
+
+
