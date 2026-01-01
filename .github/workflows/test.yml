@@ -14,7 +14,7 @@ jobs:
 
       - name: Setup dummy ALSA device
         run: |
-          # 仮想デバイス設定
+          # 仮想デバイス設定 
           cat <<'EOF' > /etc/asound.conf
           pcm.!default {
               type plug
