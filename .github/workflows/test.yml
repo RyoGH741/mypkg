@@ -11,9 +11,22 @@ jobs:
           apt-get update
           apt-get install -y libportaudio2 pulseaudio libsndfile1 python3-pip
           pip install sounddevice aubio numpy
-      
+
+      - name: start pulseaudio and create virtual mic
+        run: |
+          # ユーザ空間で PulseAudio を起動
+          pulseaudio --start --exit-idle-time=-1
+          # 仮想出力 sink
+          pactl load-module module-null-sink sink_name=fake_sink
+          # 仮想マイク作成
+          pactl load-module module-remap-source master=fake_sink.monitor source_name=fake_mic
+          # 確認
+          pactl list short sources
+
+
       - name: build and test
         run: |
+          export PULSE_SERVER=unix:/run/user/1000/pulse/native
           rsync -av ./ /root/ros2_ws/src/mypkg/
           cd /root/ros2_ws
           bash -xv ./src/mypkg/test/test.bash /root
