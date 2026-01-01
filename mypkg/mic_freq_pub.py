@@ -44,7 +44,6 @@ class MicFreqPub(Node):
         msg = Float32()
         msg.data = freq
         self.pub.publish(msg)
-        self.get_logger().info(f"{freq}")
         
 def main():
     rclpy.init()
