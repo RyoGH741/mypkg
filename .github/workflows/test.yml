@@ -4,30 +4,44 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     container: ryuichiueda/ubuntu22.04-ros2:latest
+
     steps:
       - uses: actions/checkout@v2
-      - name: install system
+
+      - name: install audio system
         run: |
           apt-get update
-          apt-get install -y libportaudio2 pulseaudio libsndfile1 python3-pip
-          pip install sounddevice aubio numpy
+          # ALSA + PulseAudio 両方導入
+          apt-get install -y pulseaudio alsa-utils alsa-base libasound2 libportaudio2 python3-pip
+          pip install --no-cache-dir sounddevice aubio numpy
 
-      - name: start pulseaudio and create virtual mic
+      - name: setup dummy ALSA device and pulseaudio
         run: |
-          # 一時ユーザ runner を作成
-          useradd -m runner
+          # snd-dummy カーネルモジュールを読み込む（仮想デバイスを作る）
+          modprobe snd-dummy || true
 
-          # runner ユーザで PulseAudio を起動
+          # ALSA 仮想デバイスを確認
+          aplay -l || true
+          arecord -l || true
+
+          # PulseAudio をユーザモードで起動
+          useradd -m runner
           su - runner -c "
             pulseaudio --start --exit-idle-time=-1
+            pactl load-module module-alsa-source device=hw:0,0
             pactl load-module module-null-sink sink_name=fake_sink
             pactl load-module module-remap-source master=fake_sink.monitor source_name=fake_mic
             pactl list short sources
           "
-      - name: build and test
-        run: |
+
+          # PulseAudio ソケットを export
           export PULSE_SERVER=unix:/run/user/1001/pulse/native
           echo \"PULSE_SERVER=$PULSE_SERVER\" >> $GITHUB_ENV
+
+      - name: build and test
+        run: |
+          source /root/.bashrc
+          export PULSE_SERVER=$PULSE_SERVER
           rsync -av ./ /root/ros2_ws/src/mypkg/
           cd /root/ros2_ws
           bash -xv ./src/mypkg/test/test.bash /root
