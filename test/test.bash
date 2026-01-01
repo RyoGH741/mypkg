@@ -11,6 +11,7 @@ source /opt/ros/humble/setup.bash
 source $dir/ros2_ws/install/setup.bash
 
 timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log
+python3 -m sounddevice
 cat /tmp/mypkg.log
 ng () {
 	res=1
