@@ -11,19 +11,11 @@ source /opt/ros/humble/setup.bash
 source $dir/ros2_ws/install/setup.bash
 
 timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log
+res=0
+grep -q 'audio stream started' /tmp/mypkg.log || { res=1; echo 'MISS: audio stream started'; }
+grep -q 'from mic_freq_pub to tuner_node' /tmp/mypkg.log || { res=1; echo 'MISS: from mic_freq_pub to tuner_node'; }
+grep -q 'from tuner_node to draw_piano' /tmp/mypkg.log || { res=1; echo 'MISS: from tuner_node to draw_piano'; }
 
-keywords=(
-  "audio stream started"
-  "from mic_freq_pub to tuner_node"
-  "from tuner_node to draw_piano"
-)
+[ "${res}" = 0 ] && echo OK
 
-ok=true
-for kw in "${keywords[@]}"; do
-  if ! grep -q "$kw" /tmp/mypkg.log; then
-    echo "MISS: $kw"
-    ok=false
-  fi
-done
-
-$ok && echo "OK"
+exit $res
