@@ -12,9 +12,12 @@ source $dir/ros2_ws/install/setup.bash
 
 timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log
 res=0
-grep -q 'audio stream started' /tmp/mypkg.log || { res=1; echo 'MISS: audio stream started'; }
-grep -q 'from mic_freq_pub to tuner_node' /tmp/mypkg.log || { res=1; echo 'MISS: from mic_freq_pub to tuner_node'; }
-grep -q 'from tuner_node to draw_piano' /tmp/mypkg.log || { res=1; echo 'MISS: from tuner_node to draw_piano'; }
+cat /tmp/mypkg.log | grep -q 'audio stream started'
+[ "$?" = 0 ] || [ res=1 ]
+cat /tmp/mypkg.log | grep -q 'from mic_freq_pub to tuner_node'
+[ "$?" = 0 ] || [ res=1 ]
+cat /tmp/mypkg.log | grep -q 'from tuner_node to draw_piano'
+[ "$?" = 0 ] || [ res=1 ]
 
 [ "${res}" = 0 ] && echo OK
 
