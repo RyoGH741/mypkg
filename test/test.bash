@@ -4,6 +4,7 @@
 
 dir=~
 [ "$1" != "" ] && dir="$1"
+python3 -m sounddevice
 
 cd $dir/ros2_ws
 colcon build
