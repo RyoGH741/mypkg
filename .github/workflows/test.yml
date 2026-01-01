@@ -12,22 +12,10 @@ jobs:
           apt-get install -y alsa-utils alsa-base libasound2 libasound2-plugins libportaudio2 python3-pip
           pip install sounddevice aubio numpy
 
-      - name: setup dummy alsa device
+      - name: Setup dummy ALSA device
         run: |
-          # ALSAの設定確認（物理デバイスはない）
-          aplay -l || true
-          arecord -l || true
-
-          # 仮想デバイスを作るための設定ファイルを追加
+          # 仮想デバイス設定
           cat <<'EOF' > /etc/asound.conf
-          pcm.dummy {
-              type hw
-              card 0
-          }
-          ctl.dummy {
-              type hw
-              card 0
-          }
           pcm.!default {
               type plug
               slave.pcm "null"
@@ -38,14 +26,12 @@ jobs:
           }
           EOF
 
-          # ALSAの状態を確認
-          aplay -L
-          arecord -L
+          # 確認（Optional）
+          aplay -L || true
+          arecord -L || true
 
       - name: build and test
         run: |
-          export PULSE_SERVER=unix:/run/user/1001/pulse/native
-          echo \"PULSE_SERVER=$PULSE_SERVER\" >> $GITHUB_ENV
           rsync -av ./ /root/ros2_ws/src/mypkg/
           cd /root/ros2_ws
           bash -xv ./src/mypkg/test/test.bash /root
