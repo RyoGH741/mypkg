@@ -9,7 +9,7 @@ jobs:
       - name: install system
         run: |
           apt-get update
-          apt-get install -y alsa-utils alsa-base pulseaudio libasound2 libasound2-plugins libportaudio2 python3-pip
+          apt-get install -y alsa-utils alsa-base libasound2 libasound2-plugins libportaudio2 python3-pip
           pip install sounddevice aubio numpy
 
       - name: setup dummy alsa device
