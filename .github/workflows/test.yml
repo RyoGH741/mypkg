@@ -6,6 +6,12 @@ jobs:
     container: ryuichiueda/ubuntu22.04-ros2:latest
     steps:
       - uses: actions/checkout@v2
+      - name: install system
+        run: |
+          apt update
+          apt install -y libportaudio2 libsndfile1 python3-pip
+          pip install sounddevice aubio numpy
+      
       - name: build and test
         run: |
           rsync -av ./ /root/ros2_ws/src/mypkg/
