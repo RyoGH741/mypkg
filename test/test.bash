@@ -11,8 +11,7 @@ source /opt/ros/humble/setup.bash
 source $dir/ros2_ws/install/setup.bash
 
 timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log
-cat /tmp/mypkg.log | grep "audio stream started"
-echo $?
+
 keywords=(
   "audio stream started"
   "from mic_freq_pub to tuner_node"
