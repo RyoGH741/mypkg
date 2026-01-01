@@ -26,7 +26,8 @@ jobs:
           "
       - name: build and test
         run: |
-          export PULSE_SERVER=unix:/run/user/1000/pulse/native
+          export PULSE_SERVER=unix:/run/user/1001/pulse/native
+          echo \"PULSE_SERVER=$PULSE_SERVER\" >> $GITHUB_ENV
           rsync -av ./ /root/ros2_ws/src/mypkg/
           cd /root/ros2_ws
           bash -xv ./src/mypkg/test/test.bash /root

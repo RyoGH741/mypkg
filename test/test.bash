@@ -1,6 +1,8 @@
 #!/bin/bash
 # SPDX-FileCopyrightText: 2025 Ryoichi Sakamaki
 # SPDX-License-Identifier: GPL-3.0-only
+export PULSE_SERVER=unix:/run/user/1001/pulse/native
+ls -l /run/user/*/pulse/native
 
 dir=~
 [ "$1" != "" ] && dir="$1"
