@@ -14,17 +14,16 @@ jobs:
 
       - name: start pulseaudio and create virtual mic
         run: |
-          # ユーザ空間で PulseAudio を起動
-          pulseaudio --system --disallow-exit --no-cpu-limit --exit-idle-time=-1 &
-          sleep 3
-          # 仮想出力 sink
-          pactl load-module module-null-sink sink_name=fake_sink
-          # 仮想マイク作成
-          pactl load-module module-remap-source master=fake_sink.monitor source_name=fake_mic
-          # 確認
-          pactl list short sources
+          # 一時ユーザ runner を作成
+          useradd -m runner
 
-
+          # runner ユーザで PulseAudio を起動
+          su - runner -c "
+            pulseaudio --start --exit-idle-time=-1
+            pactl load-module module-null-sink sink_name=fake_sink
+            pactl load-module module-remap-source master=fake_sink.monitor source_name=fake_mic
+            pactl list short sources
+          "
       - name: build and test
         run: |
           export PULSE_SERVER=unix:/run/user/1000/pulse/native
