@@ -10,7 +10,7 @@ class Tuner(Node):
 
     def __init__(self):
         super().__init__("tuner")
-        self.sub = self.create_subscription(Float32, "mic_freq", self.cb, 10)
+        self.sub = self.create_subscription(Float32, "freq", self.cb, 10)
         self.pub = self.create_publisher(ChannelFloat32, "note_info", 10)
 
         self.onmei_list = ["A", "B", "H", "C", "Ds", "D", "Es", "E", "F", "Gs", "G", "As"]
@@ -20,7 +20,8 @@ class Tuner(Node):
         return 442 * 2 ** (1 / 12 * (n-49))
     
     def cb(self, msg):
-        self.get_logger().info("from mic_freq_pub to tuner_node : %f" %msg.data)#送られたか確認
+        #受信したかの確認
+        self.get_logger().info("freq : %f" %msg.data)
         
         freq = msg.data
         number = 0
@@ -49,7 +50,7 @@ class Tuner(Node):
         #送信
         note_info_msg = ChannelFloat32()
         note_info_msg.name = f"{onmei}{number}"
-        note_info_msg.values = [diff, basefreq]
+        note_info_msg.values = [basefreq, diff]
         self.pub.publish(note_info_msg)
 
 def main():

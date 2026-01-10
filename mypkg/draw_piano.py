@@ -56,7 +56,8 @@ class DrawPiano(Node):
             x2 += 7
 
     def cb(self, msg):
-        self.get_logger().info(f"from tuner_node to draw_piano : {msg.name} {msg.values}")
+        #受信したかの確認
+        self.get_logger().info(f"note_info : {msg.name} {msg.values}")
 
         #全ての色をリセット
         for name, rect in self.all_keys.items():
@@ -69,8 +70,8 @@ class DrawPiano(Node):
             self.all_keys[target_note].set_facecolor("red")
 
         #テキストの更新
-        diff = round(msg.values[0], 2)
-        base = round(msg.values[1], 2)
+        base = round(msg.values[0], 2)
+        diff = round(msg.values[1], 2)
         
         if diff < -0.5:
             meter = " low [ <  |    ]"

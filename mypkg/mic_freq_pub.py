@@ -13,19 +13,20 @@ class MicFreqPub(Node):
 
     def __init__(self):
         super().__init__("mic_freq_pub")
-        self.pub = self.create_publisher(Float32, "mic_freq", 10)
+        self.pub = self.create_publisher(Float32, "freq", 10)
 
-        self.sr = 44100    #サンプリング周波数
-        self.bs = 1024 * 2        #周波数解析範囲
-        self.device = None        #デバイス番号、任意に変更
-        #aubioの設定
-        self.pitch_o = aubio.pitch("yin", self.bs * 2, self.bs, self.sr)
+        self.fs = 44100        # サンプリング周波数
+        self.N = 1024 * 2     # サンプル数
+        self.device = None     # デバイス番号、任意に変更
+
+        # aubioの設定
+        self.pitch_o = aubio.pitch("yin", self.N * 2, self.N, self.fs)
         self.pitch_o.set_unit("Hz")
         
-        #音声取得の設定
+        # 音声取得の設定
         try:
-            self.stream = sd.InputStream(channels=1, samplerate=self.sr,
-                                        blocksize=self.bs, callback=self.cb,
+            self.stream = sd.InputStream(channels=1, samplerate=self.fs,
+                                        blocksize=self.N, callback=self.cb,
                                             device=self.device)
             self.stream.start()
             self.get_logger().info("audio stream started")
@@ -36,11 +37,11 @@ class MicFreqPub(Node):
         if status:
             self.get_logger().warn(f"Sounddevice status: {status}")
         
-        #YIN計算
+        # YIN計算
         audio = indata[:, 0].astype(np.float32)
         freq = float(self.pitch_o(audio)[0])
 
-        #送信
+        # 送信
         msg = Float32()
         msg.data = freq
         self.pub.publish(msg)
