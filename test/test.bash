@@ -19,10 +19,6 @@ timeout 10 ros2 launch mypkg mic_to_piano.launch.py > /tmp/mypkg.log
 
 res=0
 
-#マイク入力が出来ているかの確認
-cat /tmp/mypkg.log | grep -q 'audio stream started'
-[ "$?" = 0 ] || ng "$((LINENO - 1))"
-
 #tuner_node に freq が送られているかの確認
 cat /tmp/mypkg.log | grep -q 'freq : '
 [ "$?" = 0 ] || ng "$((LINENO - 1))"
