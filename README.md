@@ -1,7 +1,7 @@
 # チューナーver.ROS2
 ![test](https://github.com/RyoGH741/mypkg/actions/workflows/test.yml/badge.svg)
 
-このROS2パッケージには音声の周波数解析と音楽的処理を行うノードが含まれています。
+このROS2パッケージには音声の周波数解析と音楽的処理を行うノードが含まれています。各ノードは他のROS2パッケージやノードと組み合わせて利用できるよう設計されています。
 
 ## ノード概要
 ### mic_freq_pub
@@ -26,6 +26,14 @@
     - name = 音名(例 : A4, Ds5)
     - values = [基準周波数(Hz)、周波数差(Hz)]
 
+## launchファイルについて
+- 以下のコマンドを実行すると、本パッケージの3つのノードを同時に立ち上げることができます。
+```
+& ros2 launch mypkg mic_to_piano.launch.py
+```
+- 実行すると、以下のように表示されます。
+![Image](https://github.com/user-attachments/assets/fe160ffb-b455-4eb0-bd6a-d69e864d16a3)
+
 ## 必要なソフトウェア
 - ROS2 (Humble)
 - Python
@@ -36,14 +44,6 @@
 - aubio
 - numpy
 - matplotlib
-
-## launchファイルについて
-- 以下のコマンドを実行すると、本パッケージの3つのノードを同時に立ち上げることができます。
-```
-& ros2 launch mypkg mic_to_piano.launch.py
-```
-- 実行すると、以下のように表示されます。
-![Image](https://github.com/user-attachments/assets/fe160ffb-b455-4eb0-bd6a-d69e864d16a3)
 
 ## 動作確認環境
 - Ubuntu 22.04
